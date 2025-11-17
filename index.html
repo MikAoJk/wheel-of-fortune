@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Wheel of Fortuna</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>Wheel of Fortuna</h1>
+  </header>
+
+  <main>
+    <section id="game-setup">
+      <h2>Players</h2>
+      <form id="add-player-form" autocomplete="off">
+        <input id="player-name" name="playerName" placeholder="Player name" required />
+        <button type="submit">Add Player</button>
+      </form>
+      <ul id="players-list" aria-label="Players"></ul>
+    </section>
+
+    <section id="wheel-section">
+      <h2>Wheel</h2>
+      <div class="wheel-wrapper">
+        <canvas id="wheel" width="500" height="500" aria-label="Wheel of Fortuna"></canvas>
+        <div class="pointer" aria-hidden="true">▼</div>
+      </div>
+      <div class="controls">
+        <button id="spin-btn" disabled>Spin Wheel</button>
+        <button id="next-player-btn" disabled>Next Player</button>
+        <label>
+          Duration (s):
+          <input id="spin-duration" type="number" min="1" max="12" value="5" />
+        </label>
+      </div>
+      <div id="current-player-box">
+        Current Player: <span id="current-player-name">—</span>
+      </div>
+      <div id="result-box" aria-live="polite"></div>
+    </section>
+
+    <section id="segments-section">
+      <h2>Segments</h2>
+      <p>You can customize the wheel segments below. Format: label | value (points). Remove rows to shrink wheel.</p>
+      <table id="segments-table">
+        <thead>
+          <tr><th>Label</th><th>Value</th><th>Actions</th></tr>
+        </thead>
+        <tbody id="segments-body"></tbody>
+      </table>
+      <button id="add-segment-btn">Add Segment</button>
+      <button id="apply-segments-btn">Apply Changes to Wheel</button>
+    </section>
+
+    <section id="scoreboard-section">
+      <h2>Scoreboard</h2>
+      <table id="scoreboard">
+        <thead>
+          <tr><th>Player</th><th>Score</th><th>Turns</th></tr>
+        </thead>
+        <tbody id="scoreboard-body"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer>
+    <small>Wheel of Fortuna demo • Vanilla JS</small>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
