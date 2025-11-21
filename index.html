@@ -12,15 +12,6 @@
   </header>
 
   <main>
-    <section id="game-setup">
-      <h2>Players</h2>
-      <form id="add-player-form" autocomplete="off">
-        <input id="player-name" name="playerName" placeholder="Player name" required />
-        <button type="submit">Add Player</button>
-      </form>
-      <ul id="players-list" aria-label="Players"></ul>
-    </section>
-
     <section id="wheel-section">
       <h2>Wheel</h2>
       <div class="wheel-wrapper">
@@ -28,15 +19,11 @@
         <div class="pointer" aria-hidden="true">▼</div>
       </div>
       <div class="controls">
-        <button id="spin-btn" disabled>Spin Wheel</button>
-        <button id="next-player-btn" disabled>Next Player</button>
+        <button id="spin-btn">Spin Wheel</button>
         <label>
           Duration (s):
           <input id="spin-duration" type="number" min="1" max="12" value="5" />
         </label>
-      </div>
-      <div id="current-player-box">
-        Current Player: <span id="current-player-name">—</span>
       </div>
       <div id="result-box" aria-live="polite"></div>
     </section>
@@ -52,16 +39,6 @@
       </table>
       <button id="add-segment-btn">Add Segment</button>
       <button id="apply-segments-btn">Apply Changes to Wheel</button>
-    </section>
-
-    <section id="scoreboard-section">
-      <h2>Scoreboard</h2>
-      <table id="scoreboard">
-        <thead>
-          <tr><th>Player</th><th>Score</th><th>Turns</th></tr>
-        </thead>
-        <tbody id="scoreboard-body"></tbody>
-      </table>
     </section>
   </main>
 
