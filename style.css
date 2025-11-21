@@ -67,18 +67,26 @@ section {
 
 .pointer {
   position: absolute;
-  top: -28px;
-  right: -28px;
-  transform: translateY(-50%);
+  top: 0;              /* Anchor at top of wheel wrapper */
+  left: 50%;           /* Horizontal center */
+  transform: translate(-50%, -100%); /* Move up above the wheel */
   font-size: 2.2rem;
   color: var(--accent);
   text-shadow: 0 0 4px #000;
   animation: pulse 1.8s infinite;
 }
 
+/* Keep the pointer centered while pulsing */
 @keyframes pulse {
-  0%,100% { transform: translateY(-50%) scale(1); }
-  50% { transform: translateY(-50%) scale(1.15); }
+  0%, 100% { transform: translate(-50%, -100%) scale(1); }
+  50% { transform: translate(-50%, -100%) scale(1.15); }
+}
+
+@media (max-width: 640px) {
+  .pointer {
+    font-size: 1.5rem;
+    /* Positioning remains centered; no need for right override */
+  }
 }
 
 .controls {
@@ -220,14 +228,4 @@ footer {
   margin-top: 1rem;
   font-size: .75rem;
   opacity: .7;
-}
-
-@media (max-width: 640px) {
-  .pointer {
-    right: -18px;
-    font-size: 1.5rem;
-  }
-  .wheel-wrapper {
-    width: 320px;
-  }
 }
