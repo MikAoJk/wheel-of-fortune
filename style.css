@@ -67,7 +67,7 @@ section {
 
 .pointer {
   position: absolute;
-  top: 50%;
+  top: -28px;
   right: -28px;
   transform: translateY(-50%);
   font-size: 2.2rem;
@@ -229,25 +229,5 @@ footer {
   }
   .wheel-wrapper {
     width: 320px;
-  }
-}
-.pointer {
-  position: absolute;
-  top: -28px;          /* lifts pointer above the wheel */
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 2.2rem;
-  color: var(--accent);
-  text-shadow: 0 0 4px #000;
-  animation: pulse 1.8s infinite;
-}
-@keyframes pulse {
-  0%,100% { transform: translateX(-50%) scale(1); }
-  50% { transform: translateX(-50%) scale(1.15); }
-}
-@media (max-width: 640px) {
-  .pointer {
-    top: -20px;
-    font-size: 1.5rem;
   }
 }
