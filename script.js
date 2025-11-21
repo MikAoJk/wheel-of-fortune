@@ -1,10 +1,10 @@
 /* Wheel of Fortuna - Vanilla JS
-   Simplified version (players & scoreboard removed)
+   Simplified version (players & scoreboard removed; value scoring removed)
    Features:
-   - Dynamic segments editable in a table
+   - Dynamic segments editable in a table (labels only)
    - Animated spin with easing
    - Adjustable spin duration
-   - Simplified pointer orientation (pointer at top, index calc simplified)
+   - Simplified pointer orientation (pointer at top)
 */
 
 (function() {
@@ -18,25 +18,24 @@
   const applySegmentsBtn = document.getElementById('apply-segments-btn');
   const spinDurationInput = document.getElementById('spin-duration');
 
-  // Wheel / game state (no players)
+  // Wheel state: segments contain only label + color
   let segments = [
-    { label: '10', value: 10, color: '#ff6b6b' },
-    { label: '25', value: 25, color: '#ffa94d' },
-    { label: '50', value: 50, color: '#ffd43b' },
-    { label: '75', value: 75, color: '#69db7c' },
-    { label: '100', value: 100, color: '#38d9a9' },
-    { label: 'Miss', value: 0, color: '#748ffc' },
-    { label: '150', value: 150, color: '#9775fa' },
-    { label: '200', value: 200, color: '#ff8787' }
+    { label: '10', color: '#ff6b6b' },
+    { label: '25', color: '#ffa94d' },
+    { label: '50', color: '#ffd43b' },
+    { label: '75', color: '#69db7c' },
+    { label: '100', color: '#38d9a9' },
+    { label: 'Miss', color: '#748ffc' },
+    { label: '150', color: '#9775fa' },
+    { label: '200', color: '#ff8787' }
   ];
 
   let isSpinning = false;
-  let spinAngle = 0; // current rotation (radians)
+  let spinAngle = 0; // radians
 
   const TWO_PI = Math.PI * 2;
-  const ROTATION_OFFSET = -Math.PI / 2; // Draw slice 0 starting at pointer (top)
+  const ROTATION_OFFSET = -Math.PI / 2; // slice 0 starts at top (pointer)
 
-  // Utilities
   function randomColorSeed(i, total) {
     const h = Math.round((360 / total) * i);
     return `hsl(${h}deg,70%,55%)`;
@@ -58,7 +57,7 @@
 
     ctx.save();
     ctx.translate(cx, cy);
-    ctx.rotate(spinAngle + ROTATION_OFFSET); // offset so slice index 0 starts at pointer
+    ctx.rotate(spinAngle + ROTATION_OFFSET);
 
     for (let i = 0; i < count; i++) {
       const start = i * arc;
@@ -73,7 +72,6 @@
       ctx.lineWidth = 2;
       ctx.stroke();
 
-      // Label
       ctx.save();
       ctx.rotate(start + arc / 2);
       ctx.translate(radius * 0.62, 0);
@@ -118,14 +116,11 @@
     lines.forEach((ln, i) => context.fillText(ln, x, offsetY + i * lineHeight));
   }
 
-  // Simplified: pointer at top. Because slice 0 is drawn so its start is at top, the segment under pointer is found by inverse of spinAngle.
   function getSegmentAtPointer() {
     const count = segments.length;
     if (count === 0) return null;
     const arc = TWO_PI / count;
-    // Wheel rotates positive => slices move clockwise visually; pointer fixed at top.
-    // After offset in drawWheel, slice 0 begins at top angle 0 (pointer location). So we need the slice whose start angle covers (TWO_PI - spinAngle) modulo TWO_PI.
-    const normalized = ((TWO_PI - (spinAngle % TWO_PI)) + TWO_PI) % TWO_PI; // range [0, TWO_PI)
+    const normalized = ((TWO_PI - (spinAngle % TWO_PI)) + TWO_PI) % TWO_PI;
     const index = Math.floor(normalized / arc) % count;
     return segments[index];
   }
@@ -139,7 +134,7 @@
     const duration = Math.min(Math.max(Number(spinDurationInput.value) || 5, 1), 12);
     const start = performance.now();
     const startAngle = spinAngle;
-    const totalRotations = 5 + Math.random() * 5; // 5-10 rotations
+    const totalRotations = 5 + Math.random() * 5;
     const finalOffset = Math.random() * TWO_PI;
     const targetAngle = startAngle + TWO_PI * totalRotations + finalOffset;
 
@@ -163,22 +158,17 @@
   function finishSpin() {
     isSpinning = false;
     const landed = getSegmentAtPointer();
-    if (!landed) {
-      resultBox.textContent = 'No segments.';
-    } else {
-      resultBox.textContent = `Result: ${landed.label} (${landed.value} points)`;
-    }
+    resultBox.textContent = landed ? `Result: ${landed.label}` : 'No segments.';
     spinBtn.disabled = false;
   }
 
-  // Segments table handling
+  // Segments table (labels only)
   function rebuildSegmentsTable() {
     segmentsBody.innerHTML = '';
     segments.forEach((seg, i) => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td><input type="text" value="${seg.label}" data-label="${i}" /></td>
-        <td><input type="number" value="${seg.value}" data-value="${i}" /></td>
         <td class="segment-actions">
           <button data-color="${i}" title="Randomize Color">Color</button>
           <button data-remove-seg="${i}" title="Remove Segment">Remove</button>
@@ -190,9 +180,7 @@
 
   segmentsBody.addEventListener('input', e => {
     const labelIdx = e.target.dataset.label;
-    const valueIdx = e.target.dataset.value;
     if (labelIdx !== undefined) segments[labelIdx].label = e.target.value;
-    if (valueIdx !== undefined) segments[valueIdx].value = Number(e.target.value);
   });
 
   segmentsBody.addEventListener('click', e => {
@@ -212,7 +200,7 @@
   });
 
   addSegmentBtn.addEventListener('click', () => {
-    segments.push({ label: 'New', value: 0, color: randomColorSeed(segments.length, segments.length + 1) });
+    segments.push({ label: 'New', color: randomColorSeed(segments.length, segments.length + 1) });
     rebuildSegmentsTable();
     drawWheel();
   });
@@ -222,15 +210,13 @@
     drawWheel();
   });
 
-  // Spin interaction
   spinBtn.addEventListener('click', startSpin);
 
-  // Initialization
+  // Init
   rebuildSegmentsTable();
   shuffleColorsIfMissing();
   drawWheel();
 
-  // Accessibility: keyboard shortcuts for spin button
   document.addEventListener('keydown', e => {
     if ((e.key === 'Enter' || e.key === ' ') && document.activeElement === spinBtn && !spinBtn.disabled) {
       e.preventDefault();
@@ -238,6 +224,5 @@
     }
   });
 
-  // Expose minimal state for debugging
   window.WheelGame = { getState: () => ({ segments, spinAngle }) };
 })();
