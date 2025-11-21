@@ -4,6 +4,7 @@
    - Dynamic segments editable in a table
    - Animated spin with easing
    - Adjustable spin duration
+   - Simplified pointer orientation (pointer at top, index calc simplified)
 */
 
 (function() {
@@ -30,7 +31,10 @@
   ];
 
   let isSpinning = false;
-  let spinAngle = 0;
+  let spinAngle = 0; // current rotation (radians)
+
+  const TWO_PI = Math.PI * 2;
+  const ROTATION_OFFSET = -Math.PI / 2; // Draw slice 0 starting at pointer (top)
 
   // Utilities
   function randomColorSeed(i, total) {
@@ -50,11 +54,11 @@
 
     ctx.clearRect(0, 0, size, size);
     const count = segments.length;
-    const arc = (Math.PI * 2) / count;
+    const arc = TWO_PI / count;
 
     ctx.save();
     ctx.translate(cx, cy);
-    ctx.rotate(spinAngle);
+    ctx.rotate(spinAngle + ROTATION_OFFSET); // offset so slice index 0 starts at pointer
 
     for (let i = 0; i < count; i++) {
       const start = i * arc;
@@ -69,6 +73,7 @@
       ctx.lineWidth = 2;
       ctx.stroke();
 
+      // Label
       ctx.save();
       ctx.rotate(start + arc / 2);
       ctx.translate(radius * 0.62, 0);
@@ -85,7 +90,7 @@
 
     // Center hub
     ctx.beginPath();
-    ctx.arc(cx, cy, radius * 0.12, 0, Math.PI * 2);
+    ctx.arc(cx, cy, radius * 0.12, 0, TWO_PI);
     ctx.fillStyle = '#222';
     ctx.fill();
     ctx.lineWidth = 4;
@@ -96,7 +101,7 @@
   function wrapText(context, text, x, y, maxWidth, lineHeight) {
     const words = text.split(' ');
     let line = '';
-    let lines = [];
+    const lines = [];
     for (let n = 0; n < words.length; n++) {
       const testLine = line + words[n] + ' ';
       const metrics = context.measureText(testLine);
@@ -113,13 +118,15 @@
     lines.forEach((ln, i) => context.fillText(ln, x, offsetY + i * lineHeight));
   }
 
-  function getSegmentAtPointer(angle) {
-    // Pointer aimed downward (visual arrow). Adjust to match original orientation.
-    const normalized = (Math.PI * 2 - (angle % (Math.PI * 2)) + Math.PI / 2) % (Math.PI * 2);
-    const arc = (Math.PI * 2) / segments.length;
-    let index = Math.floor(normalized / arc);
-    if (index < 0) index = 0;
-    if (index >= segments.length) index = segments.length - 1;
+  // Simplified: pointer at top. Because slice 0 is drawn so its start is at top, the segment under pointer is found by inverse of spinAngle.
+  function getSegmentAtPointer() {
+    const count = segments.length;
+    if (count === 0) return null;
+    const arc = TWO_PI / count;
+    // Wheel rotates positive => slices move clockwise visually; pointer fixed at top.
+    // After offset in drawWheel, slice 0 begins at top angle 0 (pointer location). So we need the slice whose start angle covers (TWO_PI - spinAngle) modulo TWO_PI.
+    const normalized = ((TWO_PI - (spinAngle % TWO_PI)) + TWO_PI) % TWO_PI; // range [0, TWO_PI)
+    const index = Math.floor(normalized / arc) % count;
     return segments[index];
   }
 
@@ -132,9 +139,9 @@
     const duration = Math.min(Math.max(Number(spinDurationInput.value) || 5, 1), 12);
     const start = performance.now();
     const startAngle = spinAngle;
-    const totalRotations = 5 + Math.random() * 5;
-    const finalOffset = Math.random() * Math.PI * 2;
-    const targetAngle = startAngle + (Math.PI * 2) * totalRotations + finalOffset;
+    const totalRotations = 5 + Math.random() * 5; // 5-10 rotations
+    const finalOffset = Math.random() * TWO_PI;
+    const targetAngle = startAngle + TWO_PI * totalRotations + finalOffset;
 
     function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
 
@@ -155,8 +162,12 @@
 
   function finishSpin() {
     isSpinning = false;
-    const landed = getSegmentAtPointer(spinAngle);
-    resultBox.textContent = `Result: ${landed.label} (${landed.value} points)`;
+    const landed = getSegmentAtPointer();
+    if (!landed) {
+      resultBox.textContent = 'No segments.';
+    } else {
+      resultBox.textContent = `Result: ${landed.label} (${landed.value} points)`;
+    }
     spinBtn.disabled = false;
   }
 
