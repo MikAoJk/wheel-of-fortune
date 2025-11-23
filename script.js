@@ -1,3 +1,4 @@
+
 (function() {
   // DOM references
   const canvas = document.getElementById('wheel');
