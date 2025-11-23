@@ -204,6 +204,10 @@ button:active {
   padding: .3rem .5rem;
 }
 
+.segment-actions button:last-child {
+  margin-right: 0;
+}
+
 #scoreboard {
   width: 100%;
   border-collapse: collapse;
