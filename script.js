@@ -24,10 +24,7 @@
     { label: '25', color: '#ffa94d' },
     { label: '50', color: '#ffd43b' },
     { label: '75', color: '#69db7c' },
-    { label: '100', color: '#38d9a9' },
-    { label: 'Miss', color: '#748ffc' },
-    { label: '150', color: '#9775fa' },
-    { label: '200', color: '#ff8787' }
+    { label: 'Miss', color: '#748ffc' }
   ];
 
   let isSpinning = false;
