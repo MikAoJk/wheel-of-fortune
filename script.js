@@ -1,12 +1,3 @@
-/* Wheel of Fortuna - Vanilla JS
-   Simplified version (players & scoreboard removed; value scoring removed)
-   Features:
-   - Dynamic segments editable in a table (labels only)
-   - Animated spin with easing
-   - Adjustable spin duration
-   - Simplified pointer orientation (pointer at top)
-*/
-
 (function() {
   // DOM references
   const canvas = document.getElementById('wheel');
@@ -20,11 +11,11 @@
 
   // Wheel state: segments contain only label + color
   let segments = [
-    { label: '10', color: '#ff6b6b' },
-    { label: '25', color: '#ffa94d' },
-    { label: '50', color: '#ffd43b' },
-    { label: '75', color: '#69db7c' },
-    { label: 'Miss', color: '#748ffc' }
+    { label: 'Joakim', color: '#ff6b6b' },
+    { label: 'Per', color: '#ffa94d' },
+    { label: 'Birgitte, color: '#ffd43b' },
+    { label: 'Hans', color: '#69db7c' },
+    { label: 'Ole', color: '#748ffc' }
   ];
 
   let isSpinning = false;
