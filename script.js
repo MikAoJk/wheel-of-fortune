@@ -14,7 +14,7 @@
   let segments = [
     { label: 'Joakim', color: '#ff6b6b' },
     { label: 'Per', color: '#ffa94d' },
-    { label: 'Birgitte, color: '#ffd43b' },
+    { label: 'Birgitte', color: '#ffd43b' },
     { label: 'Hans', color: '#69db7c' },
     { label: 'Ole', color: '#748ffc' }
   ];
